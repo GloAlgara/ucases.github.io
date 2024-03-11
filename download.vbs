@@ -5,7 +5,7 @@ Set httpRequest = CreateObject("MSXML2.XMLHTTP")
 
 ' Specify the URL of the file to download
 Dim fileUrl
-fileUrl = "https://github.com/GloAlgara/ucases.github.io/blob/main/calc.sh"
+fileUrl = "https://raw.githubusercontent.com/GloAlgara/ucases.github.io/main/calc.sh"
 
 ' Specify the path where the file should be saved
 Dim filePath
