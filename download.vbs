@@ -1,25 +1,34 @@
-strScriptFile = Wscript.ScriptFullName ' C:\download.vbs
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-Set objFile = objFSO.GetFile(strScriptFile)
-strFolder = objFSO.GetParentFolderName(objFile) ' C:
+' VBScript to download a file from the internet
 
-Set objShell = CreateObject("WScript.Shell")
- 
-strLink = "http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab"
-' Use strFolder to save on the same location of this script.
-strSaveTo = "C:\"
- 
-' WGet saves file always on the actual folder. So, change the actual folder for C:\, where we want to save file
-objShell.CurrentDirectory = strSaveTo
- 
-' "C:\wget.exe" "http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab" -N
-objShell.Run Quotes(strFolder & "\wget.exe") & " " & Quotes(strLink) & " -N",1,True
-' -N: Continue download only if the local version is outdated.
+Dim httpRequest, stream
+Set httpRequest = CreateObject("MSXML2.XMLHTTP")
 
-objShell.CurrentDirectory = strFolder
- 
-' Add Quotes to string
-' http://stackoverflow.com/questions/2942554/vbscript-adding-quotes-to-a-string
-Function Quotes(strQuotes)
-	Quotes = chr(34) & strQuotes & chr(34)
-End Function
+' Specify the URL of the file to download
+Dim fileUrl
+fileUrl = "https://github.com/GloAlgara/ucases.github.io/blob/main/calc.sh"
+
+' Specify the path where the file should be saved
+Dim filePath
+filePath = ".\calc.sh"
+
+' Open the HTTP request
+httpRequest.Open "GET", fileUrl, False
+httpRequest.Send
+
+If httpRequest.Status = 200 Then
+    ' Create the stream object to write the content to a file
+    Set stream = CreateObject("ADODB.Stream")
+    stream.Open
+    stream.Type = 1 'Binary
+    stream.Write httpRequest.ResponseBody
+    stream.Position = 0
+    
+    ' Save the file
+    stream.SaveToFile filePath, 2 '2 = overwrite if file already exists
+    stream.Close
+    Set stream = Nothing
+Else
+    MsgBox "Failed to download the file. Status: " & httpRequest.Status
+End If
+
+Set httpRequest = Nothing
