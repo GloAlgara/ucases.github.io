@@ -1,2 +1,2 @@
 @echo off 
-start calc.exe
+start microsoft.windows.camera
